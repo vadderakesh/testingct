@@ -8,13 +8,13 @@ Http.onreadystatechange = (e) => {
   var json=Http.responseText;
   var object=JSON.parse(json);
   var totalContests=object.meta.total_count;
- // console.log(object);
+  console.log(object);
   var objectsArray=object.objects;
   for(var i=0;i<100;i++) {
-    var id=objectsArray[i].id;
-    var 
-    console.log(id);
+     // document.getElementById("eventName").innerHTML=objectsArray[i].event;
+      document.getElementById("eventid").innerHTML=objectsArray[i].id;
   }
+ console.log(object);
   document.getElementById("op").innerHTML=totalContests;
   };
   }
