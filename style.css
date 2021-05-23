@@ -1,0 +1,43 @@
+.nameClass {
+text-align: center;
+color: blue;
+font-size: larger;
+font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+};
+.divclass {
+    background-color: black;
+    width: 100px;
+    height: 100px;
+};
+.heading {
+    color:teal;
+    font-size: 50;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-style: normal;
+    text-align: center;
+}
+.footer {
+    padding: 10px;
+    color: white;
+}
+.button {
+    border: none;
+  color:white;
+  padding: 10px 23px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  background-color:#4CAF50;
+}
+.select {
+display: inline-block;
+height: 30px;
+width: 150px;
+outline: none;
+color: #74646e;
+border: 1px solid #ccc;
+border-radius: 5px;
+box-shadow: 1px 1px 2px #999;
+background: #eee;
+}
