@@ -60,3 +60,10 @@ width: 150px;
 color: #74646e;
 background: #eee;
 }
+
+.alertClass {
+    text-align: center;
+    color:rgb(52, 54, 153);
+    font-size: 25;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
