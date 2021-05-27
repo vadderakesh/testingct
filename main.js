@@ -1,4 +1,24 @@
-function get() {
+
+/* 
+  function which gets invoked when user clicks om fetch
+  two jobs :
+    flushes the existing data
+    calls the respective function ti generate data
+
+*/
+
+function loadTheData() {
+  document.getElementById("outputStream").innerHTML="";
+  executeAndDisplay();
+}
+
+
+
+/* 
+   function to handle  the APi request and generate the html for output
+*/
+
+function executeAndDisplay() {
 const Http = new XMLHttpRequest();
 var contestName=document.getElementById("contest").value;
 var timingOption=document.getElementById("timing").value;
@@ -16,20 +36,24 @@ const monthNames = ["January", "February", "March", "April", "May", "June",
 ];
 
 /* declare all css/class variables */
+
 var divClass="divClass";
 var nameClass="nameClass";
 var startTimeClass="startTimeClass";
 var endTimeClass="endTimeClass";
 var durationClass="durationClass";
 var linkClass="linkClass";
+var alertClass="alertClass";
 
+/* make request to API */
 
 Http.onreadystatechange = (e) => {
-  var json=Http.responseText;
-  var object=JSON.parse(json);
+  var jsonData=Http.responseText;
+  var object=JSON.parse(jsonData);
   var str="";
-  var print="";
+  var bufferString="";
   console.log(object);
+
   // in this json, the main object is an array of objects,so we iterate over each object
 
    for(var i=0;i<object.length;i++) {
@@ -47,7 +71,7 @@ Http.onreadystatechange = (e) => {
 
           // format the start-time correspondingly
           var startDate=new Date(start_time);
-          var startDay=(startDate.getDay()<10?'0':'')+startDate.getDay();
+          var startDay=(startDate.getDate()<10?'0':'')+startDate.getDate();
           var startMonth=monthNames[startDate.getMonth()];
           var startYear=startDate.getFullYear();
           var startHours=(startDate.getHours()<10?'0':'')+startDate.getHours();
@@ -57,7 +81,7 @@ Http.onreadystatechange = (e) => {
 
           // format the end-time correspondingly
           var endDate=new Date(end_time);
-          var endDay=(endDate.getDay()<10?'0':'')+endDate.getDay();
+          var endDay=(endDate.getDate()<10?'0':'')+endDate.getDate();
           var endMonth=monthNames[endDate.getMonth()];
           var endYear=endDate.getFullYear();
           var endMinutes=(endDate.getMinutes()<10?'0':'')+endDate.getMinutes();
@@ -65,34 +89,39 @@ Http.onreadystatechange = (e) => {
           var newFormatEndTime=endDay+" "+endMonth+" "+endYear+" "+endHours+":"+endMinutes+" (UTC+5:30)";
 
           // format the duration
-          var readableDuration=convertSecondsToReadableString(duration);
+          var readableDuration=convertTimeInSecondstoNormalFormat(duration);
 
           //format the url as an hyperlink
 
           var contestLink="<a href='";
-          contestLink+=url+"'>Goto Contest Page</a>";
+          var blank="_blank";
+          var  rel="noreferrer noopener";
+          contestLink+=url+"' target="+blank+" rel="+rel+">Goto Contest Page</a>";
+          
 
           // append the each contest details to html
-          print+="<div class="+divClass+">";
+          bufferString+="<div class="+divClass+">";
           
           // append the contest name
-          print+="<span class="+nameClass+">"+name+"</span><br>";
+          bufferString+="<span class="+nameClass+">"+name+"</span><br>";
 
           //append the start time
-          print+="<span class="+startTimeClass+">"+"Starts At: "+newFormatStartTime+"</span><br>";
+          bufferString+="<span class="+startTimeClass+">"+"Starts At: "+newFormatStartTime+"</span><br>";
 
           //append the end time
-          print+="<span class="+endTimeClass+">"+"Ends At: "+newFormatEndTime+"</span><br>";
+          bufferString+="<span class="+endTimeClass+">"+"Ends At: "+newFormatEndTime+"</span><br>";
 
           //append the duration
-          print+="<span class="+durationClass+">"+"Duration: "+readableDuration+"</span><br>";
+          bufferString+="<span class="+durationClass+">"+"Duration: "+readableDuration+"</span><br>";
 
           //append the contest url
 
-          print+="<span class="+linkClass+">"+contestLink+"</span><br>";
+          bufferString+="<span class="+linkClass+">"+contestLink+"</span><br>";
 
           //finally clode the div
-          print+="</div><br><hr></hr><br>";
+          bufferString+="</div><br><hr></hr><br>";
+
+          // deprecated code---will be removed in next fix after peer review
 
           /*    
               console.log(element);
@@ -116,35 +145,50 @@ Http.onreadystatechange = (e) => {
 
       }
   }
-   document.getElementById("outputStream").innerHTML=print;
+
+  //  handle the failed URL's call
+
+  if(bufferString==="" || bufferString.length===0) {
+    var message="Oops, no contests are available .Try after some time :)"
+    var emptyMessage="<span class="+alertClass+">"+message+"</span><br>";
+    document.getElementById("outputStream").innerHTML=emptyMessage;
+  }
+  else {
+   document.getElementById("outputStream").innerHTML=bufferString;
+  }
  };
  }
 
- function convertSecondsToReadableString(seconds) {
-  seconds = seconds || 0;
-  seconds = Number(seconds);
-  seconds = Math.abs(seconds);
+/*
+ function to handle the conversio of time in seconds to normak format
 
-  const d = Math.floor(seconds / (3600 * 24));
-  const h = Math.floor(seconds % (3600 * 24) / 3600);
-  const m = Math.floor(seconds % 3600 / 60);
-  const s = Math.floor(seconds % 60);
+*/
+
+ function convertTimeInSecondstoNormalFormat(timeInSeconds) {
+  timeInSeconds = timeInSeconds || 0;
+  timeInSeconds = Number(timeInSeconds);
+  timeInSeconds = Math.abs(timeInSeconds);
+
+  const days = Math.floor(timeInSeconds / (3600 * 24));
+  const hrs = Math.floor(timeInSeconds % (3600 * 24) / 3600);
+  const min = Math.floor(timeInSeconds % 3600 / 60);
+  const sec = Math.floor(timeInSeconds % 60);
   const parts = [];
 
-  if (d > 0) {
-    parts.push(d + ' day' + (d > 1 ? 's' : ''));
+  if (days > 0) {
+    parts.push(days + ' day' + (days > 1 ? 's' : ''));
   }
 
-  if (h > 0) {
-    parts.push(h + ' hour' + (h > 1 ? 's' : ''));
+  if (hrs > 0) {
+    parts.push(hrs + ' hour' + (hrs > 1 ? 's' : ''));
   }
 
-  if (m > 0) {
-    parts.push(m + ' minute' + (m > 1 ? 's' : ''));
+  if (min > 0) {
+    parts.push(min + ' minute' + (min > 1 ? 's' : ''));
   }
 
-  if (s > 0) {
-    parts.push(s + ' second' + (s > 1 ? 's' : ''));
+  if (sec > 0) {
+    parts.push(sec + ' second' + (sec > 1 ? 's' : ''));
   }
   return parts.join(" ");
-}
+ }
